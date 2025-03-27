@@ -1,0 +1,217 @@
+"use client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { useState, useEffect } from "react";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { OrderHeader } from "./order-header";
+import { OrderProgress } from "./order-progress";
+
+const formSchema = z.object({
+  firstName: z
+    .string()
+    .min(2, { message: "First name must be at least 2 characters." }),
+  lastName: z
+    .string()
+    .min(2, { message: "Last name must be at least 2 characters." }),
+  email: z.string().email({ message: "Please enter a valid email address." }),
+  orderType: z.string().min(1, { message: "Please select an order type." }),
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
+export default function OrderForm() {
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      orderType: "standard",
+    },
+  });
+
+  const [patientFullName, setPatientFullName] = useState("Adam Applegate");
+
+  useEffect(() => {
+    const firstName = form.watch("firstName") || "";
+    const lastName = form.watch("lastName") || "";
+
+    if (firstName || lastName) {
+      setPatientFullName(`${firstName} ${lastName}`.trim());
+    } else {
+      setPatientFullName("Adam Applegate"); // Default name if both fields are empty
+    }
+  }, [form.watch("firstName"), form.watch("lastName")]);
+
+  function onSubmit(data: FormValues) {
+    console.log(data);
+    setPatientFullName(`${data.firstName} ${data.lastName}`.trim());
+    alert("Form submitted successfully!");
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <OrderHeader patientFullName={patientFullName} />
+      <OrderProgress />
+
+      {/* Form Content */}
+      <div className="p-6">
+        <h2 className="text-xl font-medium mb-6">
+          Step 1: Overview<span className="text-primary">*</span>
+        </h2>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <div>
+              <h3 className="text-lg font-medium mb-4">General Information</h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <FormField
+                  control={form.control}
+                  name="firstName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Patient First Name
+                        <span className="text-primary">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter first name"
+                          className="border-input"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="lastName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Patient Last Name<span className="text-primary">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter last name"
+                          className="border-input"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Patient Email Address</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="email"
+                          placeholder="Enter email address"
+                          className="border-input"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="orderType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Order Type<span className="text-primary">*</span>
+                      </FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="border-input">
+                            <SelectValue placeholder="Select order type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Edge & No Mount">
+                            Edge & No Mount
+                          </SelectItem>
+                          <SelectItem value="Edge & Mount">
+                            Edge & Mount
+                          </SelectItem>
+                          <SelectItem value="Uncut">Uncut</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="mb-6">
+                <Label htmlFor="orderOptions" className="block mb-2">
+                  Order Options<span className="text-primary">*</span>
+                </Label>
+                <div className="text-sm text-muted-foreground mb-2">
+                  Use this menu to specify redos, warranties, multiple pairs,
+                  etc
+                </div>
+                <Select>
+                  <FormControl>
+                    <SelectTrigger className="w-full border-input">
+                      <SelectValue placeholder="Select Order Option" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="standard">Standard Order</SelectItem>
+                    <SelectItem value="redo">Redo Order</SelectItem>
+                    <SelectItem value="warranty">Warranty</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="flex justify-end mt-8">
+              <Button
+                type="submit"
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                Next
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </div>
+    </div>
+  );
+}
