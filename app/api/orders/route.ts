@@ -21,9 +21,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     // Validate required fields
-    const { firstName, lastName, email, orderType, orderOptions } = body;
+    const { firstName, lastName, email, orderType } = body;
 
-    if (!firstName || !lastName || !email || !orderType || !orderOptions) {
+    if (!firstName || !lastName || !email || !orderType) {
       return NextResponse.json(
         { error: "All fields are required" },
         { status: 400 }
@@ -48,7 +48,6 @@ export async function POST(request: NextRequest) {
       lastName,
       email,
       orderType,
-      orderOptions,
       createdAt: new Date(),
       status: "pending",
     };

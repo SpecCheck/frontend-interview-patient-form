@@ -12,7 +12,6 @@ interface Order {
   lastName: string;
   email: string;
   orderType: string;
-  orderOptions: string;
   status: string;
   createdAt: string;
 }

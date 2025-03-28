@@ -38,9 +38,6 @@ const formSchema = z.object({
     .min(2, { message: "Last name must be at least 2 characters." }),
   email: z.string().email({ message: "Please enter a valid email address." }),
   orderType: z.string().min(1, { message: "Please select an order type." }),
-  orderOptions: z
-    .string()
-    .min(1, { message: "Please select an order option." }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -54,7 +51,6 @@ export default function OrderForm() {
       lastName: "",
       email: "",
       orderType: "standard",
-      orderOptions: "",
     },
   });
 
@@ -189,42 +185,6 @@ export default function OrderForm() {
                             Edge & Mount
                           </SelectItem>
                           <SelectItem value="Uncut">Uncut</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="mb-6">
-                <Label htmlFor="orderOptions" className="block mb-2">
-                  Order Options<span className="text-primary">*</span>
-                </Label>
-                <div className="text-sm text-muted-foreground mb-2">
-                  Use this menu to specify redos, warranties, multiple pairs,
-                  etc
-                </div>
-                <FormField
-                  control={form.control}
-                  name="orderOptions"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger className="w-full border-input">
-                            <SelectValue placeholder="Select Order Option" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="standard">
-                            Standard Order
-                          </SelectItem>
-                          <SelectItem value="redo">Redo Order</SelectItem>
-                          <SelectItem value="warranty">Warranty</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />

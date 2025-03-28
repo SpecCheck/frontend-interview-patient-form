@@ -43,7 +43,6 @@ export interface Order {
   lastName: string;
   email: string;
   orderType: string;
-  orderOptions: string;
   status: "pending" | "processing" | "completed" | "cancelled";
   createdAt: Date;
   updatedAt?: Date;
