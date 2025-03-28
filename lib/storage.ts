@@ -3,6 +3,7 @@ import path from "path";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const PATIENTS_FILE = path.join(DATA_DIR, "patients.json");
+const ORDERS_FILE = path.join(DATA_DIR, "orders.json");
 
 // Ensure data directory exists
 if (!fs.existsSync(DATA_DIR)) {
@@ -47,8 +48,6 @@ export interface Order {
   createdAt: Date;
   updatedAt?: Date;
 }
-
-const ORDERS_FILE = "orders.json";
 
 // Ensure orders file exists
 if (!fs.existsSync(ORDERS_FILE)) {
