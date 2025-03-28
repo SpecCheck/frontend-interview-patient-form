@@ -5,6 +5,14 @@ import axios from "axios";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { format } from "date-fns";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface Order {
   id: string;
@@ -67,31 +75,23 @@ export function OrdersList() {
       </div>
 
       <div className="rounded-md border">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b bg-muted/50">
-              <th className="h-12 px-4 text-left align-middle font-medium">
-                Patient
-              </th>
-              <th className="h-12 px-4 text-left align-middle font-medium">
-                Order Type
-              </th>
-              <th className="h-12 px-4 text-left align-middle font-medium">
-                Status
-              </th>
-              <th className="h-12 px-4 text-left align-middle font-medium">
-                Date
-              </th>
-            </tr>
-          </thead>
-          <tbody>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Patient</TableHead>
+              <TableHead>Order Type</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Date</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {orders?.map((order) => (
-              <tr key={order.id} className="border-b">
-                <td className="p-4 align-middle">
+              <TableRow key={order.id}>
+                <TableCell>
                   {order.firstName} {order.lastName}
-                </td>
-                <td className="p-4 align-middle">{order.orderType}</td>
-                <td className="p-4 align-middle">
+                </TableCell>
+                <TableCell>{order.orderType}</TableCell>
+                <TableCell>
                   <span
                     className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
                       order.status === "completed"
@@ -105,14 +105,14 @@ export function OrdersList() {
                   >
                     {order.status}
                   </span>
-                </td>
-                <td className="p-4 align-middle">
+                </TableCell>
+                <TableCell>
                   {format(new Date(order.createdAt), "MMM d, yyyy")}
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );
