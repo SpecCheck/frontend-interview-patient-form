@@ -1,10 +1,5 @@
-import OrderForm from "@/components/order-form"
+import { OrdersList } from "@/components/orders-list";
 
 export default function Home() {
-  return (
-    <main className="min-h-screen">
-      <OrderForm />
-    </main>
-  )
+  return <OrdersList />;
 }
-

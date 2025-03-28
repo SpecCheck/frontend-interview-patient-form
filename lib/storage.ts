@@ -35,3 +35,38 @@ export function readPatients(): Patient[] {
 export function writePatients(patients: Patient[]): void {
   fs.writeFileSync(PATIENTS_FILE, JSON.stringify(patients, null, 2));
 }
+
+export interface Order {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  orderType: string;
+  orderOptions: string;
+  status: "pending" | "processing" | "completed" | "cancelled";
+  createdAt: Date;
+  updatedAt?: Date;
+}
+
+const ORDERS_FILE = "orders.json";
+
+// Ensure orders file exists
+if (!fs.existsSync(ORDERS_FILE)) {
+  fs.writeFileSync(ORDERS_FILE, JSON.stringify([], null, 2));
+}
+
+export function readOrders(): Order[] {
+  try {
+    const data = fs.readFileSync(ORDERS_FILE, "utf-8");
+    return JSON.parse(data);
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+      return [];
+    }
+    throw error;
+  }
+}
+
+export function writeOrders(orders: Order[]): void {
+  fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2));
+}

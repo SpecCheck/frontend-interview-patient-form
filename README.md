@@ -11,11 +11,15 @@ npm run dev
 
 ## Structure
 
-This is a basic Next.js app with:
+This is a basic Next.js app. On the client side, you will find:
 
 1. `app/components/order-form.tsx` - A form to collect patient information
-2. `GET /api/patients` - Gets all patients
-3. `POST /api/patients` - Creates a new patient
-4. `GET /api/patients/:id` - Gets a single patient by ID
-5. `PUT /api/patients/:id` - Updates a patient by ID
-6. `DELETE /api/patients/:id` - Deletes a patient by ID
+2. `app/components/ui` - Shadcn UI components
+
+On the server side, you will find:
+
+1. `GET /api/patients` - Gets all patients
+2. `POST /api/patients` - Creates a new patient
+3. `GET /api/patients/:id` - Gets a single patient by ID
+4. `PUT /api/patients/:id` - Updates a patient by ID
+5. `DELETE /api/patients/:id` - Deletes a patient by ID

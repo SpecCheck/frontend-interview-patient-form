@@ -3,6 +3,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useState, useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,6 +27,7 @@ import {
 } from "@/components/ui/select";
 import { OrderHeader } from "./order-header";
 import { OrderProgress } from "./order-progress";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   firstName: z
@@ -34,11 +38,15 @@ const formSchema = z.object({
     .min(2, { message: "Last name must be at least 2 characters." }),
   email: z.string().email({ message: "Please enter a valid email address." }),
   orderType: z.string().min(1, { message: "Please select an order type." }),
+  orderOptions: z
+    .string()
+    .min(1, { message: "Please select an order option." }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 export default function OrderForm() {
+  const router = useRouter();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -46,26 +54,37 @@ export default function OrderForm() {
       lastName: "",
       email: "",
       orderType: "standard",
+      orderOptions: "",
     },
   });
 
   const [patientFullName, setPatientFullName] = useState("Adam Applegate");
+  const firstName = form.watch("firstName") || "";
+  const lastName = form.watch("lastName") || "";
 
   useEffect(() => {
-    const firstName = form.watch("firstName") || "";
-    const lastName = form.watch("lastName") || "";
-
     if (firstName || lastName) {
       setPatientFullName(`${firstName} ${lastName}`.trim());
-    } else {
-      setPatientFullName("Adam Applegate"); // Default name if both fields are empty
     }
-  }, [form.watch("firstName"), form.watch("lastName")]);
+  }, [firstName, lastName]);
+
+  const createOrderMutation = useMutation({
+    mutationFn: async (data: FormValues) => {
+      const response = await axios.post("/api/orders", data);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Order created successfully!");
+      router.push("/");
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.error || "Failed to create order");
+    },
+  });
 
   function onSubmit(data: FormValues) {
-    console.log(data);
     setPatientFullName(`${data.firstName} ${data.lastName}`.trim());
-    alert("Form submitted successfully!");
+    createOrderMutation.mutate(data);
   }
 
   return (
@@ -186,18 +205,32 @@ export default function OrderForm() {
                   Use this menu to specify redos, warranties, multiple pairs,
                   etc
                 </div>
-                <Select>
-                  <FormControl>
-                    <SelectTrigger className="w-full border-input">
-                      <SelectValue placeholder="Select Order Option" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="standard">Standard Order</SelectItem>
-                    <SelectItem value="redo">Redo Order</SelectItem>
-                    <SelectItem value="warranty">Warranty</SelectItem>
-                  </SelectContent>
-                </Select>
+                <FormField
+                  control={form.control}
+                  name="orderOptions"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="w-full border-input">
+                            <SelectValue placeholder="Select Order Option" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="standard">
+                            Standard Order
+                          </SelectItem>
+                          <SelectItem value="redo">Redo Order</SelectItem>
+                          <SelectItem value="warranty">Warranty</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
             </div>
 
@@ -205,8 +238,9 @@ export default function OrderForm() {
               <Button
                 type="submit"
                 className="bg-primary text-primary-foreground hover:bg-primary/90"
+                disabled={createOrderMutation.isPending}
               >
-                Next
+                {createOrderMutation.isPending ? "Creating..." : "Next"}
               </Button>
             </div>
           </form>
