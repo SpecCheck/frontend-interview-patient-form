@@ -13,8 +13,9 @@ npm run dev
 
 This is a basic Next.js app. On the client side, you will find:
 
-1. `app/components/order-form.tsx` - A form to collect patient information
-2. `app/components/ui` - Shadcn UI components
+1. `/app/components/order-list.tsx` - A list of orders which lives at the `/` route
+2. `/app/components/order-form.tsx` - A form to collect patient information which lives at the `/new` route
+3. `/app/components/ui` - Shadcn UI components
 
 On the server side, you will find:
 
@@ -23,3 +24,6 @@ On the server side, you will find:
 3. `GET /api/patients/:id` - Gets a single patient by ID
 4. `PUT /api/patients/:id` - Updates a patient by ID
 5. `DELETE /api/patients/:id` - Deletes a patient by ID
+
+6. `GET /api/orders` - Gets all orders
+7. `POST /api/orders` - Creates a new order
